@@ -6,23 +6,19 @@
     ".": "./src/mod.ts"
   },
   "dependencies": {
-    "@bigmistqke/solid-whenever": "^0.1.1",
+    "@bigmistqke/solid-whenever": "0.1.1",
     "@livestore/common": "workspace:*",
     "@livestore/livestore": "workspace:*",
     "@livestore/utils": "workspace:*",
     "@opentelemetry/api": "catalog:",
-    "@solid-primitives/deep": "^0.3.3"
+    "@solid-primitives/deep": "0.3.3"
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "@opentelemetry/sdk-trace-base": "catalog:",
-=======
     "@livestore/adapter-web": "workspace:*",
     "@livestore/utils-dev": "workspace:*",
-    "@opentelemetry/sdk-trace-base": "^2.0.1",
+    "@opentelemetry/sdk-trace-base": "catalog:",
     "@solidjs/testing-library": "^0.8.10",
     "@testing-library/jest-dom": "^6.9.1",
->>>>>>> 754b0c742 (feat: port tests from react to solid)
     "jsdom": "^26.1.0",
     "solid-js": "catalog:",
     "typescript": "catalog:",
