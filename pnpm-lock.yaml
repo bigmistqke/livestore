@@ -2292,6 +2292,9 @@ importers:
       '@livestore/utils-dev':
         specifier: workspace:*
         version: link:../utils-dev
+      '@local/tests-package-common':
+        specifier: workspace:*
+        version: link:../../../tests/package-common
       '@opentelemetry/sdk-trace-base':
         specifier: 'catalog:'
         version: 2.2.0(@opentelemetry/api@1.9.0)
@@ -2359,6 +2362,9 @@ importers:
       '@livestore/utils-dev':
         specifier: workspace:*
         version: link:../utils-dev
+      '@local/tests-package-common':
+        specifier: workspace:*
+        version: link:../../../tests/package-common
       '@opentelemetry/sdk-trace-base':
         specifier: 'catalog:'
         version: 2.2.0(@opentelemetry/api@1.9.0)
@@ -2936,6 +2942,9 @@ importers:
       '@livestore/adapter-node':
         specifier: workspace:*
         version: link:../../packages/@livestore/adapter-node
+      '@livestore/adapter-web':
+        specifier: workspace:*
+        version: link:../../packages/@livestore/adapter-web
       '@livestore/common':
         specifier: workspace:*
         version: link:../../packages/@livestore/common
@@ -2948,6 +2957,9 @@ importers:
       '@livestore/utils':
         specifier: workspace:*
         version: link:../../packages/@livestore/utils
+      '@opentelemetry/api':
+        specifier: 'catalog:'
+        version: 1.9.0
     devDependencies:
       '@livestore/utils-dev':
         specifier: workspace:*
@@ -19054,7 +19066,7 @@ snapshots:
     dependencies:
       '@livestore/adapter-web': link:packages/@livestore/adapter-web
       '@livestore/utils': link:packages/@livestore/utils
-      vite: 7.3.0(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
+      vite: 7.2.4(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -19072,7 +19084,7 @@ snapshots:
     dependencies:
       '@livestore/adapter-web': link:packages/@livestore/adapter-web
       '@livestore/utils': link:packages/@livestore/utils
-      vite: 7.3.0(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
+      vite: 7.2.4(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -32367,6 +32379,23 @@ snapshots:
       tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 24.10.1
+      fsevents: 2.3.3
+      jiti: 2.6.1
+      lightningcss: 1.30.2
+      terser: 5.44.0
+      tsx: 4.20.5
+      yaml: 2.8.1
+
+  vite@7.2.4(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1):
+    dependencies:
+      esbuild: 0.25.10
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
+      postcss: 8.5.6
+      rollup: 4.52.0
+      tinyglobby: 0.2.15
+    optionalDependencies:
+      '@types/node': 24.9.2
       fsevents: 2.3.3
       jiti: 2.6.1
       lightningcss: 1.30.2
