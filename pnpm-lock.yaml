@@ -2350,6 +2350,9 @@ importers:
         specifier: 0.3.3
         version: 0.3.3(solid-js@1.9.9)
     devDependencies:
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 0.27.0(effect@3.19.12)(vitest@3.2.4)
       '@livestore/adapter-web':
         specifier: workspace:*
         version: link:../adapter-web
@@ -2365,6 +2368,9 @@ importers:
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1
+      effect:
+        specifier: 'catalog:'
+        version: 3.19.12
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
@@ -10283,9 +10289,6 @@ packages:
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
-
-  effect@3.18.0:
-    resolution: {integrity: sha512-Hr0hVrnibYbheOUnbTwaV88NyyMTW7CrLCiOSJxMWns73pEiT29HJcsEx7pgs9E8rUa6z20775byVzXw0omPjw==}
 
   effect@3.19.12:
     resolution: {integrity: sha512-7F9RGTrCTC3D7nh9Zw+3VlJWwZgo5k33KA+476BAaD0rKIXKZsY/jQ+ipyhR/Avo239Fi6GqAVFs1mqM1IJ7yg==}
@@ -25592,11 +25595,6 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  effect@3.18.0:
-    dependencies:
-      '@standard-schema/spec': 1.0.0
-      fast-check: 3.23.2
-
   effect@3.19.12:
     dependencies:
       '@standard-schema/spec': 1.0.0
@@ -31591,7 +31589,7 @@ snapshots:
       chalk-template: 1.1.2
       commander: 13.1.0
       cosmiconfig: 9.0.0(typescript@5.9.2)
-      effect: 3.18.0
+      effect: 3.19.12
       enquirer: 2.4.1
       fast-check: 3.23.2
       globby: 14.1.0
