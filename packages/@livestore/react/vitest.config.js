@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   test: {
+    root: import.meta.dirname,
     // Try node environment with DOM globals for React tests
     environment: 'node',
     setupFiles: ['./test/setup.ts'],
