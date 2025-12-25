@@ -1,4 +1,4 @@
-import type { UnknownError } from '@livestore/common'
+import { exposeStoreForDebugging, type UnknownError } from '@livestore/common'
 import type { LiveStoreEvent, LiveStoreSchema } from '@livestore/common/schema'
 import { omitUndefineds } from '@livestore/utils'
 import type { Cause, OtelTracer, Scope } from '@livestore/utils/effect'
@@ -34,11 +34,7 @@ export const makeLiveStoreContext = <TSchema extends LiveStoreSchema, TContext =
         ...omitUndefineds({ context, boot, disableDevtools, onBootStatus, syncPayload, syncPayloadSchema }),
       })
 
-      globalThis.__debugLiveStore ??= {}
-      if (Object.keys(globalThis.__debugLiveStore).length === 0) {
-        globalThis.__debugLiveStore._ = store
-      }
-      globalThis.__debugLiveStore[storeId] = store
+      exposeStoreForDebugging(store, storeId)
 
       return { stage: 'running', store } as any as LiveStoreContextRunning['Type']
     }),
@@ -249,11 +245,7 @@ const makeStoreTag = <TSchema extends LiveStoreSchema, TStoreId extends string>(
             }),
           })
 
-          globalThis.__debugLiveStore ??= {}
-          if (Object.keys(globalThis.__debugLiveStore).length === 0) {
-            globalThis.__debugLiveStore._ = store
-          }
-          globalThis.__debugLiveStore[storeId] = store
+          exposeStoreForDebugging(store, storeId)
 
           const ctx: RunningType = { stage: 'running', store: store as StoreClass<TSchema> }
 
@@ -399,11 +391,7 @@ export const makeStoreContext =
             }),
           })
 
-          globalThis.__debugLiveStore ??= {}
-          if (Object.keys(globalThis.__debugLiveStore).length === 0) {
-            globalThis.__debugLiveStore._ = store
-          }
-          globalThis.__debugLiveStore[storeId] = store
+          exposeStoreForDebugging(store, storeId)
 
           const ctx: RunningType = { stage: 'running', store: store as StoreClass<TSchema> }
 
