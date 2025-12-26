@@ -8,7 +8,7 @@ import * as Solid from 'solid-js'
 import { useStoreRegistry } from './StoreRegistryContext.tsx'
 import { type UseClientDocumentResult, useClientDocument } from './useClientDocument.ts'
 import { useQuery } from './useQuery.ts'
-import { type AccessorMaybe, resolve } from './utils.ts'
+import { type AccessorMaybe, bypassSuspense, resolve } from './utils.tsx'
 
 /**
  * Solid-specific methods added to the store Resource returned by `useStore()`.
@@ -144,39 +144,46 @@ export const withSolidApi = <T extends Store<any, any> | Solid.Accessor<Store<an
 ): T & SolidApi => {
   return Object.assign(store, {
     useQuery(queryDef) {
-      const memo = Solid.createMemo(when(store, (store) => useQuery(queryDef, { store })))
-      return () => memo()?.()
-    },
-    useClientDocument(table: any, id: any, options: any) {
-      const [localState, setLocalState] = Solid.createSignal()
-
-      const getClient = Solid.createMemo<UseClientDocumentResult<any> | undefined>(
+      const latestStore = bypassSuspense(store)
+      const queryMemo = Solid.createMemo(
         when(
-          every(store, table, id),
-          ([store, table, id]) => {
-            const client = useClientDocument(table, id, options, { store: store })
-            const _localState = Solid.untrack(localState)
-            if (_localState !== undefined) {
-              client[1](_localState)
-              setLocalState(undefined)
-            }
-            return client
-          },
-          (previous: UseClientDocumentResult<any> | undefined) => previous,
+          latestStore,
+          (store) => useQuery(queryDef, { store }),
+          (previous: Queryable.Result<any> | undefined) => previous,
         ),
       )
 
-      // State accessor: return store state if available, otherwise local buffer
-      const state = when(getClient, ([state]) => state(), localState)
+      return when(store, () => resolve(queryMemo()))
+    },
+    useClientDocument(table: any, id: any, options: any) {
+      const [localState, setLocalState] = Solid.createSignal()
+      const latestStore = bypassSuspense(store)
 
-      // Setter: update store if ready, otherwise buffer locally
-      const setState = when(getClient, ([, set], value: any) => set(value), setLocalState)
+      const clientMemo = Solid.createMemo<UseClientDocumentResult<any> | undefined>(
+        when(every(latestStore, table, id), ([store, table, id]) => {
+          const client = useClientDocument(table, id, options, { store })
 
-      // ID accessor
-      const idAccessor = when(getClient, ([, , id]) => id())
+          const _localState = Solid.untrack(localState)
+          if (_localState !== undefined) {
+            client[1](_localState)
+            setLocalState(undefined)
+          }
 
-      // Query accessor
-      const queryAccessor = when(getClient, ([, , , query]) => query())
+          return client
+        }),
+      )
+
+      // State accessor
+      const state = when(clientMemo, ([get]) => get(), localState)
+
+      // Setter
+      const setState = when(clientMemo, ([, set], value) => set(value), setLocalState)
+
+      // ID accessor: read store at read site (triggers Suspense if pending)
+      const idAccessor = when(every(clientMemo, store), ([[, , id]]) => id())
+
+      // Query accessor: read store at read site (triggers Suspense if pending)
+      const queryAccessor = when(every(clientMemo, store), ([[, , , query]]) => query())
 
       return [state, setState, idAccessor, queryAccessor] as UseClientDocumentResult<any>
     },

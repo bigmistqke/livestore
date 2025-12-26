@@ -21,19 +21,22 @@ function createSuspenseCount(id: string) {
     return (
       <Solid.Suspense
         fallback={
-          <div
-            data-testid={id}
-            ref={() => {
-              count++
-            }}
-          />
+          (() => (
+            <div
+              data-testid={id}
+              ref={() => {
+                count++
+                console.log(`[Suspense ${id}] fallback rendered, count=${count}`)
+              }}
+            />
+          )) as unknown as Solid.JSXElement
         }
       >
         {props.children}
       </Solid.Suspense>
     )
   }
-  return Object.assign(Comp, { count: () => count, id })
+  return { Comp, count: () => count, id }
 }
 
 describe('useStore', () => {
@@ -60,17 +63,17 @@ describe('useStore', () => {
     const ChildComponent = () => {
       const store = useStore(() => options)
       return (
-        <ChildSuspense>
+        <ChildSuspense.Comp>
           <div data-testid="ready">Store loaded: {store()?.storeId}</div>
-        </ChildSuspense>
+        </ChildSuspense.Comp>
       )
     }
 
     const { findByTestId, queryByTestId } = SolidTesting.render(() => (
       <StoreRegistryProvider storeRegistry={storeRegistry}>
-        <RootSuspense>
+        <RootSuspense.Comp>
           <ChildComponent />
-        </RootSuspense>
+        </RootSuspense.Comp>
       </StoreRegistryProvider>
     ))
 
@@ -98,17 +101,17 @@ describe('useStore', () => {
     const StoreConsumer = (props: { options: () => RegistryStoreOptions<typeof schema> }) => {
       const store = useStore(props.options)
       return (
-        <ChildSuspense>
+        <ChildSuspense.Comp>
           <div data-testid="ready">Store: {store()?.storeId}</div>
-        </ChildSuspense>
+        </ChildSuspense.Comp>
       )
     }
 
     const { findByTestId, queryByTestId } = SolidTesting.render(() => (
       <StoreRegistryProvider storeRegistry={storeRegistry}>
-        <RootSuspense>
+        <RootSuspense.Comp>
           <StoreConsumer options={currentOptions} />
-        </RootSuspense>
+        </RootSuspense.Comp>
       </StoreRegistryProvider>
     ))
 
@@ -211,29 +214,27 @@ describe('useStore.useQuery', () => {
     const UseStoreSuspense = createSuspenseCount('useStore')
     const UseQuerySuspense = createSuspenseCount('useQuery')
 
-    const UseQueryComponent = (props: { store: any }) => {
-      const todos = props.store.useQuery(allTodos$)
-      return (
-        <UseQuerySuspense>
-          <div data-testid="content">Todos: {todos()?.length ?? 'loading'}</div>
-        </UseQuerySuspense>
-      )
-    }
-
     const UseStoreComponent = () => {
       const store = useStore(() => options)
+      const todos = store.useQuery(allTodos$)
       return (
-        <UseStoreSuspense>
-          <UseQueryComponent store={store} />
-        </UseStoreSuspense>
+        <UseStoreSuspense.Comp>
+          {(() => {
+            return (
+              <UseQuerySuspense.Comp>
+                <div data-testid="content">Todos: {todos()?.length ?? 'loading'}</div>
+              </UseQuerySuspense.Comp>
+            )
+          })()}
+        </UseStoreSuspense.Comp>
       )
     }
 
     const { queryByTestId } = SolidTesting.render(() => (
       <StoreRegistryProvider storeRegistry={storeRegistry}>
-        <RootSuspense>
+        <RootSuspense.Comp>
           <UseStoreComponent />
-        </RootSuspense>
+        </RootSuspense.Comp>
       </StoreRegistryProvider>
     ))
 
@@ -244,8 +245,8 @@ describe('useStore.useQuery', () => {
     })
 
     expect(RootSuspense.count()).toBe(0)
-    expect(UseStoreSuspense.count()).toBe(1)
-    expect(UseQuerySuspense.count()).toBe(0)
+    expect(UseStoreSuspense.count()).toBe(0)
+    expect(UseQuerySuspense.count()).toBe(1)
 
     await cleanupAfterUnmount(() => {})
   })
@@ -375,17 +376,17 @@ describe('useStore.useClientDocument', () => {
       setState({ username: 'early-bird', text: 'set before load' })
 
       return (
-        <ChildSuspense>
+        <ChildSuspense.Comp>
           <div data-testid="content">Username: {state().username}</div>
-        </ChildSuspense>
+        </ChildSuspense.Comp>
       )
     }
 
     const { findByTestId, queryByTestId } = SolidTesting.render(() => (
       <StoreRegistryProvider storeRegistry={storeRegistry}>
-        <RootSuspense>
+        <RootSuspense.Comp>
           <ChildComponent />
-        </RootSuspense>
+        </RootSuspense.Comp>
       </StoreRegistryProvider>
     ))
 
@@ -394,7 +395,7 @@ describe('useStore.useClientDocument', () => {
     const content = queryByTestId('content')
     expect(content?.textContent).toBe('Username: early-bird')
 
-    expect(RootSuspense.count()).toBe(1)
+    expect(RootSuspense.count()).toBe(0)
     expect(ChildSuspense.count()).toBe(0)
 
     await cleanupAfterUnmount(() => {})
